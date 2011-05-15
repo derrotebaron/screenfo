@@ -568,8 +568,15 @@ sub get_wm {
 }
 
 sub get_os {
+  my $lsb_exists = `which lsb_release`;
+  chomp($lsb_exists);
   if(-e '/etc/arch-release') {
     return("GNU/Linux (Arch Linux)");
+  }
+  elsif(-e $lsb_exists) {
+	my $lsb_rel = `lsb_release -a 2>/dev/null`;
+	$lsb_rel =~ /Description:\s*(.*)/;
+	return $1;
   }
   elsif($^O eq 'linux') {
     return("GNU/Linux"); # be nice
